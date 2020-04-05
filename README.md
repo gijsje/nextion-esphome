@@ -14,4 +14,5 @@ https://youtu.be/xagvJNTh8-Q
 
 Parts used
 Nextion 2.4" Display https://s.click.aliexpress.com/e/_dWXiQ68
+
 Wemos D1 Mini https://s.click.aliexpress.com/e/_dTyv43Q
