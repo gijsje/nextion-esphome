@@ -1,0 +1,566 @@
+substitutions:
+  display_name: Nextion Extra
+esphome:
+  name: nextion_extra
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  ap:
+    ssid: "${display_name} Fallback Hotspot"
+    password: !secret api_pass
+    
+captive_portal:
+
+web_server:
+  port: 80  
+api:
+  password: !secret api_pass
+ota:
+  password: !secret ota_pass
+
+logger:
+  baud_rate: 0
+
+uart:
+  rx_pin: D7 #GPIO3
+  tx_pin: D4 #GPIO1
+  baud_rate: 115200
+
+time:
+  - platform: sntp
+    id: sntp_time
+
+text_sensor:
+  - platform: homeassistant
+    id: staus_home
+    entity_id: input_select.thuis_status
+################################################################################
+sensor:
+#--------------------TEMPERATURE------------------------------------------------    
+  - platform: homeassistant
+    id: temperature_tuin
+    entity_id: sensor.tuin_temperatuur   
+  - platform: homeassistant
+    id: temperature_huiskamer
+    entity_id: sensor.family_room_thermostat_temperature
+  - platform: homeassistant
+    id: temperature_kantoor
+    entity_id: sensor.kantoor_temperatuur   
+#--------------------HOME STATUS--------------------------------------------------    
+  - platform: homeassistant
+    id: input_home_status
+    entity_id: input_number.nextion_home_status
+  - platform: homeassistant
+    id: input_away_status
+    entity_id: input_number.nextion_away_status
+  - platform: homeassistant
+    id: input_sleep_status
+    entity_id: input_number.nextion_sleep_status
+  - platform: homeassistant
+    id: input_vacation_status
+    entity_id: input_number.nextion_vacation_status    
+################################################################################    
+binary_sensor:
+  - platform: homeassistant
+    id: kantoor_beweging
+
+    entity_id: binary_sensor.kantoor_beweging    
+  - platform: homeassistant
+    id: keuken_beweging
+    entity_id: binary_sensor.keuken_beweging    
+  - platform: homeassistant
+    id: huiskamer_beweging
+    entity_id: binary_sensor.huiskamer_beweging       
+#####################STATUS#####################################################   
+  - platform: homeassistant
+    id: status_thuis
+    entity_id: input_boolean.thuis   
+  - platform: homeassistant
+    id: status_slapen
+    entity_id: input_boolean.slapen 
+  - platform: homeassistant
+    id: status_vakantie
+    entity_id: input_boolean.vakantie  
+  - platform: homeassistant
+    id: status_weg
+    entity_id: input_boolean.weg    
+
+
+#--------------------------------CURTAINS-----------------------------
+  - platform: nextion
+    page_id: 1
+    component_id: 4
+    id: curtain_open
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: cover.open_cover
+            data:
+              entity_id: cover.huiskamer_gordijnen
+  - platform: nextion
+    page_id: 1
+    component_id: 5
+    id: curtain_closed
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: cover.close_cover
+            data:
+              entity_id: cover.huiskamer_gordijnen
+#--------------------------------LIGHTS LIVING ROOM-----------------------------
+  - platform: nextion
+    page_id: 8
+    component_id: 2
+    id: keuken_uit
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.keuken_uit
+  - platform: nextion
+    page_id: 8
+    component_id: 4
+    id: keuken_100
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.keuken_100
+  - platform: nextion
+    page_id: 8
+    component_id: 5
+    id: keuken_75
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.keuken_75
+  - platform: nextion
+    page_id: 8
+    component_id: 6
+    id: keuken_50
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.keuken_50
+  - platform: nextion
+    page_id: 8
+    component_id: 3
+    id: keuken_25
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.keuken_25
+  - platform: nextion
+    page_id: 8
+    component_id: 7
+    id: eettafel_keuken
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: light.toggle
+            data:
+              entity_id: light.eet_tafel_lamp
+#--------------------------------LIGHTS OFFICE-----------------------------------
+  - platform: nextion
+    page_id: 9
+    component_id: 2
+    id: kantoor_uit
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.kantoor_uit
+  - platform: nextion
+    page_id: 9
+    component_id: 4
+    id: kantoor_100
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.kantoor_100
+  - platform: nextion
+    page_id: 9
+    component_id: 5
+    id: kantoor_75
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.kantoor_75
+  - platform: nextion
+    page_id: 9
+    component_id: 6
+    id: kantoor_50
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.kantoor_50
+  - platform: nextion
+    page_id: 9
+    component_id: 3
+    id: kantoor_25
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: scene.turn_on
+            data:
+              entity_id: scene.kantoor_25
+  - platform: nextion
+    page_id: 9
+    component_id: 7
+    id: buro_lamp
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: light.toggle
+            data:
+              entity_id: light.kantoor_buro_lamp
+#----------------------Pagina 4 Muziek------------------------
+  - platform: nextion
+    page_id: 4
+    component_id: 5
+    id: radio_1
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id:  'http://icecast.omroep.nl/radio1-bb-mp3'
+              media_content_type: music
+              
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 2
+    id: radio_2
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id: 'http://icecast.omroep.nl/radio2-bb-mp3'
+              media_content_type: music              
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 3
+    id: radio_3fm
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id: 'http://icecast.omroep.nl/3fm-bb-mp3'
+              media_content_type: music              
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 4
+    id: radio_nostalgie
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id: 'http://nostalgiewhatafeeling.ice.infomaniak.ch/nostalgiewhatafeeling-128.mp3'
+              media_content_type: music              
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 6
+    id: radio_238
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id: 'http://18973.live.streamtheworld.com/RADIO538.mp3'
+              media_content_type: music
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 7
+    id: radio_q_music
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms      
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.play_media
+            data:
+              entity_id: media_player.group_beneden
+              media_content_id: 'https://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
+              media_content_type: music
+              
+  - platform: nextion
+    page_id: 3
+    component_id: 10
+    id: radio_zachter
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms 
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.volume_down  
+            data:            
+              entity_id: media_player.group_beneden
+
+  - platform: nextion
+    page_id: 3
+    component_id: 9
+    id: radio_stop
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms 
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.media_stop
+            data:
+              entity_id: media_player.beneden_groep
+
+  - platform: nextion
+    page_id: 3
+    component_id: 8
+    id: radio_harder
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: media_player.volume_up
+            data:
+              entity_id: media_player.group_beneden   
+              
+              
+#-----------------------THUIS STATUS--------------------------------------------
+  - platform: nextion
+    page_id: 4
+    component_id: 2
+    id: zet_naar_thuis
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.thuis_status
+              option: 'Thuis'
+
+
+  - platform: nextion
+    page_id: 4
+    component_id: 3
+    id: zet_naar_weg
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.thuis_status
+              option: 'Weg'
+
+  - platform: nextion
+    page_id: 4
+    component_id: 4
+    id: zet_naar_slapen
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.thuis_status
+              option: 'Slapen'
+              
+  - platform: nextion
+    page_id: 4
+    component_id: 5
+    id: zet_naar_vakantie
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: input_select.select_option
+            data:
+              entity_id: input_select.thuis_status
+              option: 'Vakantie'      
+              
+#-----------------------THERMOSTAT--------------------------------------------
+  - platform: nextion
+    page_id: 5
+    component_id: 3
+    id: thermostaat_naar_20c
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.family_room
+              temperature: '20'
+
+  - platform: nextion
+    page_id: 5
+    component_id: 4
+    id: thermostaat_naar_19c
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.family_room
+              temperature: '19'
+              
+  - platform: nextion
+    page_id: 5
+    component_id: 1
+    id: thermostaat_naar_15c
+    filters:
+      - delayed_on: 30ms
+      - delayed_off: 30ms    
+    on_press:
+      then:
+        - homeassistant.service:
+            service: climate.set_temperature
+            data:
+              entity_id: climate.family_room
+              temperature: '15'    
+
+
+globals:
+ - id: first_page             # First page of the display?
+   type: bool
+   restore_value: no
+ - id: display_on             # Is display on?
+   type: bool
+   restore_value: no
+   
+display:
+  - platform: nextion
+    id: dim_level
+    lambda: |-
+        it.set_wait_for_ack(false);    
+        auto time_text = id(sntp_time).now().strftime("%H:%M");
+        it.set_component_text("time", time_text.c_str());
+        it.set_component_text_printf("temp","%.1f C",id(temperature_tuin).state);
+        it.set_component_text_printf("thermostat_now","%.1f C",id(temperature_huiskamer).state);
+        if (id(status_thuis).state) {
+           it.send_command_printf("home.pic=29");
+        } else {
+           it.send_command_printf("home.pic=25");
+        }
+
+        if (id(status_weg).state) {
+           it.send_command_printf("away.pic=32");
+        } else {
+           it.send_command_printf("away.pic=28");
+        }
+        
+        if (id(status_slapen).state) {
+           it.send_command_printf("slapen.pic=30");
+        } else {
+           it.send_command_printf("slapen.pic=26");
+        }
+        
+        if (id(status_vakantie).state) {
+           it.send_command_printf("vacation.pic=31");
+        } else {
+           it.send_command_printf("vacation.pic=27");
+        }  
