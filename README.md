@@ -16,3 +16,6 @@ Parts used
 Nextion 2.4" Display https://s.click.aliexpress.com/e/_dWXiQ68
 
 Wemos D1 Mini https://s.click.aliexpress.com/e/_dTyv43Q
+
+More info can also be found here where the original idea came from
+https://github.com/aderusha/HASwitchPlate
